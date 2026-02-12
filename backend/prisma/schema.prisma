@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int        @id @default(autoincrement())
+  nome           String
+  email          String     @unique
+  passwordHash   String
+  dataRegistrazione DateTime @default(now())
+  documents      Document[]
+}
+
+model Document {
+  id            Int      @id @default(autoincrement())
+  titolo        String
+  categoria     String
+  nomeFile      String
+  urlFile       String
+  autoreUpload  Int
+  dataUpload    DateTime @default(now())
+
+  uploader      User     @relation(fields: [autoreUpload], references: [id], onDelete: Cascade)
+
+  @@index([categoria])
+  @@index([titolo])
+  @@index([dataUpload])
+}
